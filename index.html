@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2048 Game</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <h1>2048 Game</h1>
+  <div class="scoreboard">
+    Score: <span id="score">0</span> | High Score: <span id="high-score">0</span>
+  </div>
+  <div class="game-container">
+    <div id="grid-container"></div>
+  </div>
+  <div id="game-over" class="hidden">Game Over!</div>
+  <button id="restart-btn" class="hidden">Restart Game</button>
+
+  <!-- Win Modal -->
+  <div id="win-modal" class="hidden">
+    <div class="modal-content">
+      <h2>🎉 You Win!</h2>
+      <p>Would you like to restart or keep playing?</p>
+      <button id="win-restart-btn">Restart</button>
+      <button id="win-continue-btn">Keep Playing</button>
+    </div>
+  </div>
+</body>
+</html>
