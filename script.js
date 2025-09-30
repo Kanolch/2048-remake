@@ -4,19 +4,52 @@ document.addEventListener('DOMContentLoaded', () => {
   const highScoreEl = document.getElementById('high-score');
   const gameOverEl = document.getElementById('game-over');
   const restartBtn = document.getElementById('restart-btn');
-
   const winModal = document.getElementById('win-modal');
   const winRestartBtn = document.getElementById('win-restart-btn');
   const winContinueBtn = document.getElementById('win-continue-btn');
-
-  // Leaderboard elements
   const leaderboardList = document.getElementById('leaderboard-list');
+
+  // Name modal elements
+  const nameModal = document.getElementById('name-modal');
+  const playerNameInput = document.getElementById('player-name');
+  const nameSubmitBtn = document.getElementById('name-submit-btn');
+  let playerName = localStorage.getItem('playerName') || "";
 
   let board = Array(16).fill(0);
   let score = 0;
   let highScore = localStorage.getItem('highScore') || 0;
   highScoreEl.textContent = highScore;
   let hasWon = false;
+
+  function showNameModal() {
+    nameModal.classList.remove('hidden');
+  }
+  function hideNameModal() {
+    nameModal.classList.add('hidden');
+  }
+
+  // Only show modal if name not set
+  if (!playerName) {
+    showNameModal();
+  } else {
+    hideNameModal();
+  }
+
+  nameSubmitBtn.addEventListener('click', () => {
+    const name = playerNameInput.value.trim();
+    if (name.length > 0) {
+      playerName = name;
+      localStorage.setItem('playerName', playerName);
+      hideNameModal();
+    } else {
+      playerNameInput.focus();
+    }
+  });
+
+  // Prevent game from starting until name is entered
+  function canPlay() {
+    return !!localStorage.getItem('playerName');
+  }
 
   function createBoard() {
     gridContainer.innerHTML = '';
@@ -78,12 +111,23 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateLeaderboard(newScore) {
-    let leaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
-    if (newScore > 0) leaderboard.push(newScore);
-    leaderboard = leaderboard.sort((a, b) => b - a).slice(0, 5);
-    localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
-    leaderboardList.innerHTML = leaderboard.map(score => `<li>${score}</li>`).join('');
+  let leaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+  // Only add if score > 0 and playerName is set
+  if (newScore > 0 && playerName) {
+    leaderboard.push({ name: playerName, score: newScore });
   }
+  leaderboard = leaderboard
+    .filter(entry => entry.name && entry.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .filter((entry, idx, arr) =>
+      arr.findIndex(e => e.name === entry.name && e.score === entry.score) === idx
+    )
+    .slice(0, 5);
+  localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+  leaderboardList.innerHTML = leaderboard
+    .map(entry => `<li><strong>${entry.name}</strong>: ${entry.score}</li>`)
+    .join('');
+}
 
   function handleGameOver() {
     gameOverEl.classList.remove('hidden');
@@ -118,6 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   document.addEventListener('keydown', e => {
+    if (!canPlay()) return;
     if (checkGameOver()) return;
     const oldBoard = [...board];
     switch (e.key) {
@@ -139,21 +184,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  restartBtn.addEventListener('click', restartGame);
+  restartBtn.addEventListener('click', () => {
+    if (!canPlay()) return;
+    restartGame();
+  });
 
   winRestartBtn.addEventListener('click', () => {
+    if (!canPlay()) return;
     restartGame();
     winModal.classList.add('hidden');
   });
 
   winContinueBtn.addEventListener('click', () => {
     winModal.classList.add('hidden');
-    // Allow game to continue after win
   });
 
   // Initialize
   createBoard();
   generateTile();
   generateTile();
-  updateLeaderboard(0); // Show leaderboard on load
+  updateLeaderboard(0);
 });

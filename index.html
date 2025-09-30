@@ -8,15 +8,19 @@
   <script src="script.js" defer></script>
 </head>
 <body>
+  <!-- Name Modal -->
+  <div id="name-modal" class="modal-bg">
+    <div class="modal-content">
+      <h2>Enter Your Name</h2>
+      <input type="text" id="player-name" maxlength="16" placeholder="Your name">
+      <br>
+      <button id="name-submit-btn">Start Game</button>
+    </div>
+  </div>
+
   <h1>2048 Game</h1>
   <div class="scoreboard">
     Score: <span id="score">0</span> | High Score: <span id="high-score">0</span>
-  </div>
-  
-  <!-- Leaderboard Section -->
-  <div class="leaderboard">
-    <h2>Leaderboard</h2>
-    <ol id="leaderboard-list"></ol>
   </div>
 
   <div class="game-container">
@@ -24,6 +28,12 @@
   </div>
   <div id="game-over" class="hidden">Game Over!</div>
   <button id="restart-btn" class="hidden">Restart Game</button>
+
+  <!-- Leaderboard Section -->
+  <div class="leaderboard">
+    <h2>Leaderboard</h2>
+    <ol id="leaderboard-list"></ol>
+  </div>
 
   <!-- Win Modal -->
   <div id="win-modal" class="hidden">
@@ -35,3 +45,4 @@
     </div>
   </div>
 </body>
+</html>
