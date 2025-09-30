@@ -123,57 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // --- Mobile swipe support ---
-  const SWIPE_THRESHOLD = 30; // px, adjust for sensitivity
-  let touchStartX = 0, touchStartY = 0, touchEndX = 0, touchEndY = 0;
-
-  gridContainer.addEventListener('touchstart', function(e) {
-    if (e.touches.length === 1) {
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
-    }
-  });
-
-  gridContainer.addEventListener('touchend', function(e) {
-    if (e.changedTouches.length === 1) {
-      touchEndX = e.changedTouches[0].clientX;
-      touchEndY = e.changedTouches[0].clientY;
-
-      const dx = touchEndX - touchStartX;
-      const dy = touchEndY - touchStartY;
-
-      if (Math.abs(dx) > Math.abs(dy)) {
-        // Horizontal swipe
-        if (dx > SWIPE_THRESHOLD) {
-          moveRight();
-        } else if (dx < -SWIPE_THRESHOLD) {
-          moveLeft();
-        } else {
-          return;
-        }
-      } else {
-        // Vertical swipe
-        if (dy > SWIPE_THRESHOLD) {
-          moveDown();
-        } else if (dy < -SWIPE_THRESHOLD) {
-          moveUp();
-        } else {
-          return;
-        }
-      }
-
-      // After move, same logic as keyboard
-      scoreEl.textContent = score;
-      if (score > highScore) {
-        highScore = score;
-        localStorage.setItem('highScore', highScore);
-        highScoreEl.textContent = highScore;
-      }
-      generateTile();
-      checkGameOver();
-    }
-  });
-
   restartBtn.addEventListener('click', restartGame);
 
   winRestartBtn.addEventListener('click', () => {
