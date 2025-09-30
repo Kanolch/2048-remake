@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const winRestartBtn = document.getElementById('win-restart-btn');
   const winContinueBtn = document.getElementById('win-continue-btn');
 
+  // Leaderboard elements
+  const leaderboardList = document.getElementById('leaderboard-list');
+
   let board = Array(16).fill(0);
   let score = 0;
   let highScore = localStorage.getItem('highScore') || 0;
@@ -74,6 +77,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  function updateLeaderboard(newScore) {
+    let leaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+    if (newScore > 0) leaderboard.push(newScore);
+    leaderboard = leaderboard.sort((a, b) => b - a).slice(0, 5);
+    localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+    leaderboardList.innerHTML = leaderboard.map(score => `<li>${score}</li>`).join('');
+  }
+
+  function handleGameOver() {
+    gameOverEl.classList.remove('hidden');
+    restartBtn.classList.remove('hidden');
+    updateLeaderboard(score);
+  }
+
   function checkGameOver() {
     if (board.includes(0)) return false;
     for (let i = 0; i < 16; i += 4)
@@ -83,8 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
       for (let j = 0; j < 3; j++)
         if (board[i + j * 4] === board[i + (j + 1) * 4] && board[i + j * 4] < 131072) return false;
 
-    gameOverEl.classList.remove('hidden');
-    restartBtn.classList.remove('hidden');
+    handleGameOver();
     return true;
   }
 
@@ -139,4 +155,5 @@ document.addEventListener('DOMContentLoaded', () => {
   createBoard();
   generateTile();
   generateTile();
+  updateLeaderboard(0); // Show leaderboard on load
 });
